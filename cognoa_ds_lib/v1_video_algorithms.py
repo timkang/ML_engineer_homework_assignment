@@ -17,23 +17,23 @@ class Cog1Calculator(object):
 	def get_risk_level(self, row):
 		score = row['cog1_response']
 		age_months = row['age_months']
-		if age_months<24:
-			if score < -6:
+		if age_months<48:
+			if score < -9:
 				return 'high_risk'
-			elif score < -2:
+			elif score < -6:
 				return 'clear_risk'
-			elif score < 2:
+			elif score < 5:
 				return 'watchful_waiting'
 			else:
 				return 'low_risk'
 		else:
-			if score < -6:
+			if score < -8:
 				return 'high_risk'
-			elif score < -2:
+			elif score < -3:
 				return 'clear_risk'
-			elif score < 0:
+			elif score < 8:
 				return 'medium_risk_asd'
-			elif score < 2:
+			elif score < 23:
 				return 'medium_risk_learning_delay'
 			else:
 				return 'low_risk'
@@ -41,14 +41,14 @@ class Cog1Calculator(object):
 	def compute_raw_score_on_row(self, row):
 		calc_so_far = -1.823
 		try:
-			vA2 = row['ados1_a2']
+			vA2 = row['ados1_a5']
 			vB1 = row['ados1_b1']
-			vB2 = row['ados1_b2']
+			vB2 = row['ados1_b3']
 			vB5 = row['ados1_b5']
-			vB9 = row['ados1_b9']
-			vB10 = row['ados1_b10']
-			vC1 = row['ados1_c1']
-			vC2 = row['ados1_c2']
+			vB9 = row['ados1_b8']
+			vB10 = row['ados1_b9']
+			vC1 = row['ados1_c3']
+			vC2 = row['ados1_c4']
 		except:
 			print 'Missing data in row ', row
 			return np.nan
@@ -62,22 +62,22 @@ class Cog1Calculator(object):
 
 	def B10(self, vB10, vB2, vC2, init):
 		if vB10<1.5:
-			init+=0.635
+			init+=0.254
 			init = self.B2(vB2,vC2,init)
 		elif vB10>=1.5:
-			init+=-1.666
+			init+=-1.345
 		if vB10<0.5:
-			init+=0.403
+			init+=0.735
 		elif vB10>=0.5:
-			init+=-0.39
+			init+=-0.47
 		return init
 
 	def B2(self, vB2,vC2,init):
 		if vB2<1.5:
-			init+=0.601
+			init+=0.545
 			init=self.C2(vC2,init)
 		elif vB2>=1.5:
-			init+=-0.478
+			init+=-0.487
 		return init
 
 	def C2(self, vC2, init):
@@ -88,25 +88,25 @@ class Cog1Calculator(object):
 		if vB1<1:
 			init+=0.99
 		elif vB1>=1:
-			init+=-0.544
+			init+=-0.532
 			init = self.A2(vA2, init)
 		return init
 	
 	def B5(self, vB5, init):
-		init += branch(vB5, 0.5, 0.683, -1.065)
+		init += branch(vB5, 0.5, -0.245, -1.144)
 		return init
 
 	def B9(self, vB9, init):
-		init += branch(vB9, 0.5, 0.385, -0.276)
-		init += branch(vB9, 1.5, 1.215, -2.264)
+		init += branch(vB9, 0.5, 0.184, -0.276)
+		init += branch(vB9, 1.987, -1.015, 2.643)
 		return init
 
 	def A2(self, vA2, init):
-		init += branch(vA2, 0.5, 0.705, -0.954)
+		init += branch(vA2, 0.5, -0.705, -0.954)
 		return init
 
 	def C1(self, vC1, init):
-		init += branch(vC1, 0.5, 0.488, -0.456)
+		init += branch(vC1, 0.5, 0.365, +0.974)
 		return init
 			
 	def compute_raw_scores_on_df(self, input_df):
@@ -122,7 +122,6 @@ import numpy as np
 class Cog2Calculator(object):
 	def __init__(self):
 		pass
-		### [ A5, A8, B1, B3, B6, B8, B10, D2, D4 ]
 
 	def is_high_risk(self, risk_level):
 		return 1 if risk_level == 'high_risk' else 0
@@ -149,9 +148,9 @@ class Cog2Calculator(object):
 		for question in questions:
 			df_for_calculation[question] = df_for_calculation[question].apply(self.clean_column)
 		log_odds = (-15.8657 + 2.2539 * input_df['ados2_a5'] + 3.0323 * input_df['ados2_a8'] +\
-			3.8820 * input_df['ados2_b1'] + 4.3625 * input_df['ados2_b3'] +\
-			5.0750 * input_df['ados2_b6'] + 4.0215 * input_df['ados2_b8'] +\
-			3.8299 * input_df['ados2_b10'] + 3.4053 * input_df['ados2_d2'] + 2.6616 * input_df['ados2_d4'])
+			3.8820 * input_df['ados2_b1'] + 4.3625 * input_df['ados2_c4'] +\
+			5.0750 * input_df['ados2_b8'] + 4.0215 * input_df['ados2_b8'] +\
+			3.8299 * input_df['ados2_b9'] + 3.4053 * input_df['ados2_d2'] + 2.6616 * input_df['ados2_c3'])
 		probability_of_diagnosis = 1./(1. + np.exp(-1 * log_odds))
 		input_df['cog2_response'] = probability_of_diagnosis
 		input_df['risk_level'] = input_df['cog2_response'].apply(self.get_risk_level)
