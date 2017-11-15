@@ -11,7 +11,7 @@ Consider the following aspects specifically:
   - Runtime performance 
   - Conformance to standards and best practices
   
-You task is to edit this code to enforce as much of the previous improvement as possible. Don't worry if you don't understand enough about the code to suggest specific improvements. Do you best and make reasonable assumptions and educated guesses. 
+Your task is to edit this code to enforce as much of the previous improvements as possible. Don't worry if you don't understand enough about the code to suggest specific improvements. Do you best and make reasonable assumptions and educated guesses. 
 
 When not sure, you can still suggest non-specific edits. For example, if you don't know what a function is doing but still think it needs a descriptive comment, insert one that says: "descriptive comment here to explain x,y,z"
 
