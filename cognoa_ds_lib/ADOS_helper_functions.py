@@ -51,7 +51,7 @@ ADOS_v1_vs_v2_mapping_df = pd.DataFrame([
 
 
     {'v1_key': 'ados2_a1', 'v2_key': 'ados2_a1', 'details_of_question_or_answer_changes': 'mapping of answer, plus minor clarifications, probably not a big deal',
-        'v1_to_v2_answer_mapping': {'7': '3'}, 'v2_to_v1_answer_mapping': {'3': ['3', '7']}},    
+        'v1_to_v2_answer_mapping': {'7': '3'}, 'v2_to_v1_answer_mapping': {'3': ['3', '7']}},
     {'v1_key': 'ados2_a2', 'v2_key': None},
     {'v1_key': 'ados2_a3', 'v2_key': 'ados2_a2', 'details_of_question_or_answer_changes': 'Trivial clarifications'},
     {'v1_key': 'ados2_a4', 'v2_key': 'ados2_a3', 'details_of_question_or_answer_changes': 'Medium clarifications'},
@@ -93,7 +93,7 @@ def apply_response_transforms(row, response_transform_rules, transform_key, id_k
     ''' Runs on a single row, intended to be part of a pandas apply function.
     Transforms responses where needed, but not question itself. response_transform_rules defines
     the transformation that should be applied for each value. If no  transform is defined for a given
-    value then returns original value unchanged. 
+    value then returns original value unchanged.
 
     response_transform_rules should be a dictionary of mappings like this: {'1': '2', '2': ['2', '3']}
     If the mapping is to a list rather than a single value then a deterministic choice is made
@@ -135,7 +135,7 @@ def map_df_between_ADOS_versions(in_df, id_col, orig_version='v2', new_version='
     ... ID column gives user IDs of each row, required for deterministic mapping if multiple plausible answers exist
     ... Returns dataframe with converted columns
     ... Any extra/non ADOS rows are passed through without touching them
-    ...... based on 'responses_differ' key in ADOS_v1_vs_v2_mapping_df 
+    ...... based on 'responses_differ' key in ADOS_v1_vs_v2_mapping_df
 
     Note: if you are not using standard naming and have a common suffix (such as '_thompson'),
     specify that in the key_suffix variable
@@ -196,7 +196,7 @@ def map_between_ADOS_versions_old(in_df, use_strict=False, orig_version='v2', ne
     ... Returns dataframe with converted columns
     ... Any extra/non ADOS rows are passed through without touching them
     ... If use_strict is True then will drop any columns that are flagged as suspicious
-    ...... based on 'responses_differ' key in ADOS_v1_vs_v2_mapping_df 
+    ...... based on 'responses_differ' key in ADOS_v1_vs_v2_mapping_df
 
     Note: if you are not using standard naming and have a common suffix (such as '_thompson'),
     specify that in the key_suffix variable
@@ -266,7 +266,7 @@ valid_qs_and_as = {
         ('ados1_a6', [0, 1, 2, 8]),
         ('ados1_a7', [0, 1, 2, 3]),
         ('ados1_a8', [0, 1, 2, 8]),
-        
+
         ('ados1_b1', [0, 2]),
         ('ados1_b2', [0, 1, 2, 3]),
         ('ados1_b3', [0, 1, 2]),
@@ -337,21 +337,21 @@ def sanity_check_responses(in_df, evaluator):
             in_df: dataframe of the data you want to sanity check
             evaluator: 'ADOS1' or 'ADOS2' (add in adirs later)
         methodology:
-            for each key in in_df that is part of the evaluator, checks for 
+            for each key in in_df that is part of the evaluator, checks for
             presence or absence of expected responses
-        returns: 
-            missing_responses_dict: an ordered dictionary of questions and valid answers 
+        returns:
+            missing_responses_dict: an ordered dictionary of questions and valid answers
                that do not appear in the data
                .... Note that this may not be a problem if statistics are low and
                some responses simply were not given
             invalid_responses_dict: an ordered dictionary of questions and responses
                which were never defined (such as an evaluator giving a 3 when only 0, 1, and 2
                have a meaning
-            questions_not_asked: a list of questions from the evaluator that are not in the data 
+            questions_not_asked: a list of questions from the evaluator that are not in the data
             questions_that_may_be_typos: a list of keys in in_df that look like they may have been
                intended to be valid questions but which do not match
     '''
-    
+
     def convert_response(response):
         ''' If response is in bad format, convert it '''
         try:
@@ -376,7 +376,7 @@ def sanity_check_responses(in_df, evaluator):
         #print 'observed: ', observed_responses
         #print 'missing: ', missing_responses_dict[column]
         #print 'invalid: ', invalid_responses_dict[column]
-    
+
 
     questions_not_asked = [question for question in expected_qs_and_as.keys() if question not in in_df.columns]
     questions_that_may_be_typos = [col for col in in_df.columns if evaluator.lower() in col and col not in expected_qs_and_as.keys()]
@@ -390,13 +390,13 @@ def sanity_check_responses(in_df, evaluator):
 
 
 def cross_check_ADOS_consistent_with_new_version(in_df):
-    ''' Quick and dirty check to see whether in_df is more consistent with 
+    ''' Quick and dirty check to see whether in_df is more consistent with
     newer or older version
 
     Newer version has a number of responses that are not in the earlier version,
     and ados2_b12 is a new question. Check to see if these responses and this question are
-    present 
-    
+    present
+
     Returns boolean true if consistent with new version
     '''
 
@@ -411,7 +411,7 @@ def cross_check_ADOS_consistent_with_new_version(in_df):
         except:
             out_response = response
         return out_response
-    
+
     question_responses_only_in_new_version = collections.OrderedDict([
             ('ados1_a1', 4),
             ('ados1_b5', 3),
@@ -428,4 +428,3 @@ def cross_check_ADOS_consistent_with_new_version(in_df):
         if response in [convert_response(ele) for ele in list(value_counts.index)]:
             seems_like_new_version = True
     return seems_like_new_version
-

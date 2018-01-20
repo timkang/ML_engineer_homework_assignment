@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.sparse import coo_matrix
 
+# copying from the source code is bad practice and we should get rid of this asap
 
 #### This is literally copied from the sklearn 0.18 source code
 #### 0.17 does not support sample_weights, so this can be deprecated
@@ -81,7 +82,7 @@ def confusion_matrix_0p18(y_true, y_pred, labels=None, sample_weight=None):
     #    y_pred : array or indicator matrix
     #    """
     #    #### check_consistent_length(y_true, y_pred)
-    #    
+    #
     #    type_true = type_of_target(y_true)
     #    type_pred = type_of_target(y_pred)
     #

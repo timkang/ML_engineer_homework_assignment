@@ -7,6 +7,8 @@
 ### The tally list has been added
 
 
+# Many of these imports are unused and should be removed.
+# Also, it is generally bad practice to do wildcard imports; only import what you need
 import math, random
 import copy as cp
 import pandas as pd
@@ -56,8 +58,8 @@ def count_severity_level(data_row, severity_level):
 
 def incorporate_new_adir_features_to_aggregations(in_df, old_features, new_features):
     ''' new_features_list is a list of new adir features you might want to add to an existing
-	set of features (old_features) 
-	
+	set of features (old_features)
+
 	This function updates the adir/triton aggregations appropriately '''
 
     out_df = cp.deepcopy(in_df)
@@ -80,13 +82,13 @@ def incorporate_new_adir_features_to_aggregations(in_df, old_features, new_featu
 
 def run_new_feature_importance_tally(in_df, for_sure_features, new_candidate_features, number_of_tries,
     enforce_group_weight_instructions, number_of_features_to_keep, relative_weight_cutoff, model_parameters_dict):
-    ''' run number_of_tries bootstrapping experiments to tally using both the original and the new candidate features, 
+    ''' run number_of_tries bootstrapping experiments to tally using both the original and the new candidate features,
 	figure out which *of the new* features are the most important
     ... for_sure_features represents features that are used, but which you will ignore when tallying.
 	... new_candidate_features represents features that might potentially be added. Tally-based feature
 	selection will focus on figuring out which of these are best to add.
     ... model_parameters_dict should contain all the details of the model that you care about. For example, max_depth,
-	....... n_trees, dunno_range, feature_encoding_map, outcome_column, ... 
+	....... n_trees, dunno_range, feature_encoding_map, outcome_column, ...
     Returns a dataframe with ranked features by importance, including the tally and importance metrics '''
 
     criterion = model_parameters_dict['criterion']
@@ -110,7 +112,7 @@ def run_new_feature_importance_tally(in_df, for_sure_features, new_candidate_fea
         print 'try number ', i, ' out of ', number_of_tries
 
         dataset_for_this_try = subsample_per_class(test_dataset, outcome_column, {'autism':0.9, 'not':0.9} )
-      
+
         sample_weights_for_this_try = balance_dataset_on_dimensions(dataset_for_this_try, ['age_years','outcome'],
                                         enforce_group_weight_instructions=enforce_group_weight_instructions, verbose=False)
         if model_parameters_dict.get('young_sample', False):
@@ -119,7 +121,7 @@ def run_new_feature_importance_tally(in_df, for_sure_features, new_candidate_fea
                     sample_weights_for_this_try[index] *= 2
         model, encoded_features_output, y_predicted_without_dunno, y_predicted_with_dunno,\
             y_predicted_probs = all_data_model(dataset_for_this_try, all_features,
-            feature_encoding_map, outcome_column, sample_weights_for_this_try, dunno_range, RandomForestClassifier, 
+            feature_encoding_map, outcome_column, sample_weights_for_this_try, dunno_range, RandomForestClassifier,
             n_estimators = n_estimators, criterion = criterion, max_features = max_features, max_depth=max_depth,
             class_weight = class_weight)
 
@@ -154,7 +156,7 @@ def run_new_feature_importance_tally(in_df, for_sure_features, new_candidate_fea
                 sample_weights[index] *= 2
     model, encoded_features_output, y_predicted_without_dunno, y_predicted_with_dunno,\
                 y_predicted_probs = all_data_model(passing_tally_dataset, passing_tally_all_features,
-                feature_encoding_map, outcome_column, sample_weights, dunno_range, RandomForestClassifier, 
+                feature_encoding_map, outcome_column, sample_weights, dunno_range, RandomForestClassifier,
                 n_estimators = n_estimators, criterion = criterion, max_features = max_features, max_depth=max_depth,
                 class_weight = class_weight)
 
@@ -176,7 +178,7 @@ def run_new_feature_importance_tally(in_df, for_sure_features, new_candidate_fea
     return final_tally_df
 
 
-def bootstrap_cross_validate_new_features(data_df, new_features_to_try, for_sure_features, model_parameters_dict, 
+def bootstrap_cross_validate_new_features(data_df, new_features_to_try, for_sure_features, model_parameters_dict,
         enforce_group_weight_instructions, n_folds ):
     ''' This function would be run in a chain after the run_new_feature_importance_tally function has been run
     if it is desired to get an estimate of the out-of-sample error on the new features. In contrast to the run_new_feature_importance_tally
@@ -215,7 +217,7 @@ def bootstrap_cross_validate_new_features(data_df, new_features_to_try, for_sure
 			raise ValueError('Cannot add feature '+feature+' if it is already used')
         new_features = [feature]
         if feature == '':
-            all_feature_columns_for_try = for_sure_features 
+            all_feature_columns_for_try = for_sure_features
         else:
             all_feature_columns_for_try = for_sure_features + new_features
         test_dataset = incorporate_new_adir_features_to_aggregations(data_df, for_sure_features, new_features)
@@ -249,10 +251,10 @@ def bootstrap_cross_validate_new_features(data_df, new_features_to_try, for_sure
         print 'Got metrics when adding this feature (blank means no new feature): ', feature, ':'
         print 'AUC: ', averaged_metrics['without_dunno']['auc'], ', autism recall: ',\
             averaged_metrics['without_dunno']['dataset_recall_per_class']['autism'], ', not recall: ',\
-            averaged_metrics['without_dunno']['dataset_recall_per_class']['not'] 
+            averaged_metrics['without_dunno']['dataset_recall_per_class']['not']
         print '~~~~~~~~~~~~~~'
         print ''
-        
+
         dict_of_feature_lists['feature'].append(feature)
         dict_of_feature_lists['XValid_AUC'].append(averaged_metrics['without_dunno']['auc'])
         dict_of_feature_lists['autism_recall'].append(averaged_metrics['without_dunno']['dataset_recall_per_class']['autism'])
@@ -260,6 +262,3 @@ def bootstrap_cross_validate_new_features(data_df, new_features_to_try, for_sure
     df_of_feature_lists = (pd.DataFrame(dict_of_feature_lists)).sort_values('XValid_AUC', ascending=False)
     print 'df_of_feature_lists: ', df_of_feature_lists
     return df_of_feature_lists
-
-
-

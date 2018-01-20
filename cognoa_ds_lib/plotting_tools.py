@@ -1,9 +1,13 @@
-import matplotlib.pyplot as plt
+# removed the plt import as it is unnecessary and modified the code to use the matplotlib import
 import matplotlib
-### Importing matplotlib both ways because there are a mix of functions below that use different interfaces. 
+### Importing matplotlib both ways because there are a mix of functions below that use different interfaces.
 ### Would be good to clean this up at some point.
 import numpy as np
 import pandas as pd
+
+'''Add a module docstring for the file
+Also, many of the functions below have their overall description in comments.
+These should be fleshed out and moved into docstrings. The comments inside the functions can be left alone.'''
 
 def _get_list_of_unique_x_values(list_of_x_data_lists):
     ''' Helper function for functions below. Intended for overlaying bar charts where
@@ -19,8 +23,8 @@ def _get_list_of_unique_x_values(list_of_x_data_lists):
 def overlay_bar_charts_from_numeric_arrays(list_of_x_data_lists, legend_label_list, plot_options_dict):
     ''' Intended for situations where there is a small number of often repeated values that
     most of the data might have and you want to compare distributions without them obscuring
-    one another 
-    
+    one another
+
     x_values_list: a list of data lists or arrays
     '''
     list_of_unique_x_values = _get_list_of_unique_x_values(list_of_x_data_lists)
@@ -35,7 +39,7 @@ def overlay_bar_charts_from_numeric_arrays(list_of_x_data_lists, legend_label_li
             y_data_bars.append(y_value)
         list_of_x_data_bars.append(np.array(x_data_bars))
         list_of_y_data_bars.append(np.array(y_data_bars))
-    
+
     overlay_bar_charts(list_of_x_data_bars, list_of_y_data_bars, legend_label_list, x_values_are_categorical=False, plot_options_dict=plot_options_dict)
 
 
@@ -56,11 +60,11 @@ def overlay_bar_charts(list_of_x_data_bars, list_of_y_data_bars, legend_label_li
         return bar_width
 
     if 'figshape' in plot_options_dict.keys():
-        plt.figure(figsize=plot_options_dict['figshape'])
+        matplotlib.pyplot.figure(figsize=plot_options_dict['figshape'])
     else:
-        plt.figure(figsize=(12,8))
+        matplotlib.pyplot.figure(figsize=(12,8))
     if 'grid' in plot_options_dict.keys() and plot_options_dict['grid']==True:
-        plt.grid(True)
+        matplotlib.pyplot.grid(True)
     n_datasets = len(list_of_x_data_bars)
     assert n_datasets == len(list_of_y_data_bars)
     assert n_datasets == len(legend_label_list)
@@ -89,36 +93,36 @@ def overlay_bar_charts(list_of_x_data_bars, list_of_y_data_bars, legend_label_li
         this_legend_label = legend_label
         if 'means_in_legend' in plot_options_dict.keys() and plot_options_dict['means_in_legend']==True:
             this_legend_label += ', mean='+str(round(np.average(list_of_x_data_bars[plot_index], weights=list_of_y_data_bars[plot_index]), 3))
-        #plt.bar(left=x_data_bars+x_offset, height=y_data_bars, width=bar_width, color=color, alpha=0.5, label=this_legend_label)
-        plt.bar(left=x_data_bars+x_offset, height=y_data_bars, width=bar_width, color=color, alpha=0.5, label=this_legend_label)
+        #matplotlib.pyplot.bar(left=x_data_bars+x_offset, height=y_data_bars, width=bar_width, color=color, alpha=0.5, label=this_legend_label)
+        matplotlib.pyplot.bar(left=x_data_bars+x_offset, height=y_data_bars, width=bar_width, color=color, alpha=0.5, label=this_legend_label)
     if legend_label_list != ['']:
-        plt.legend(fontsize=plot_options_dict['legend_fontsize'])
-    plt.xlabel(plot_options_dict['xlabel'], fontsize=plot_options_dict['xlabel_fontsize'])
-    plt.ylabel(plot_options_dict['ylabel'], fontsize=plot_options_dict['ylabel_fontsize'])
-    plt.title(plot_options_dict['title'], fontsize=plot_options_dict['title_fontsize'])
+        matplotlib.pyplot.legend(fontsize=plot_options_dict['legend_fontsize'])
+    matplotlib.pyplot.xlabel(plot_options_dict['xlabel'], fontsize=plot_options_dict['xlabel_fontsize'])
+    matplotlib.pyplot.ylabel(plot_options_dict['ylabel'], fontsize=plot_options_dict['ylabel_fontsize'])
+    matplotlib.pyplot.title(plot_options_dict['title'], fontsize=plot_options_dict['title_fontsize'])
     if x_values_are_categorical:
         ### Increase bottom margin for readability
-        plt.xticks(np.arange(len(xtick_labels)), xtick_labels, rotation=50, fontsize=8)
-        plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.2)
+        matplotlib.pyplot.xticks(np.arange(len(xtick_labels)), xtick_labels, rotation=50, fontsize=8)
+        matplotlib.pyplot.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.2)
 
 
 #handy function to plot some histograms of DataFrame columns
 def plot_histogram(df, column_name, sort=False):
-    
+
     histo = df[column_name].value_counts()
     if(sort):
         histo = histo.sort_index()
     X = np.array(histo.keys())
     Y = histo.values
-    plt.bar(np.arange(len(X)), Y, align='center')
-    plt.xticks(np.arange(len(X)), X)
-    plt.title("Histogram of "+column_name+" values")
-    plt.xlabel(column_name)
-    plt.ylabel('Frequency')
+    matplotlib.pyplot.bar(np.arange(len(X)), Y, align='center')
+    matplotlib.pyplot.xticks(np.arange(len(X)), X)
+    matplotlib.pyplot.title("Histogram of "+column_name+" values")
+    matplotlib.pyplot.xlabel(column_name)
+    matplotlib.pyplot.ylabel('Frequency')
     fig = matplotlib.pyplot.gcf()
     fig.set_size_inches(18.5, 10.5, forward=True)
-    plt.show()
-    
+    matplotlib.pyplot.show()
+
 
 #plot correlation of categorical feature with outcome variable
 def plot_feature_correlation(df, feature_column_name, sort=False):
@@ -127,43 +131,43 @@ def plot_feature_correlation(df, feature_column_name, sort=False):
         c = c.sort_index()
     X = np.array(c.keys())
     Y = c.values
-    plt.bar(np.arange(len(X)), Y, align='center')
-    plt.xticks(np.arange(len(X)), X)
-    plt.title("Correlation of outcome variable with "+feature_column_name+" categories")
-    plt.xlabel(feature_column_name)
-    plt.ylabel('Percent non spectrum')
+    matplotlib.pyplot.bar(np.arange(len(X)), Y, align='center')
+    matplotlib.pyplot.xticks(np.arange(len(X)), X)
+    matplotlib.pyplot.title("Correlation of outcome variable with "+feature_column_name+" categories")
+    matplotlib.pyplot.xlabel(feature_column_name)
+    matplotlib.pyplot.ylabel('Percent non spectrum')
     fig = matplotlib.pyplot.gcf()
     fig.set_size_inches(18.5, 10.5, forward=True)
-    plt.show()
+    matplotlib.pyplot.show()
 
 
 def plot_classifier_profiles(bunch_of_classifier_data, plot_title, default_coverage_to_plot = 0.0, specificity_bin_width = 0.025, ylim=(0., 1.), legend_font_size=16, shaded_sensitivity_zones=True):
-    import matplotlib.pyplot as plt
-    from matplotlib.colors import LinearSegmentedColormap 
-    
-    fig = plt.figure(figsize=(20, 6))
+    import matplotlib.pyplot as matplotlib.pyplot
+    from matplotlib.colors import LinearSegmentedColormap
 
-    #setup axes        
-    plt.xlabel('specificity', fontsize=28)
-    plt.xticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
-    plt.xlim(0.0, 1.0)
-    plt.ylabel('sensitivity', fontsize=28)
-    plt.yticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
-    plt.ylim(ylim)
-    
+    fig = matplotlib.pyplot.figure(figsize=(20, 6))
+
+    #setup axes
+    matplotlib.pyplot.xlabel('specificity', fontsize=28)
+    matplotlib.pyplot.xticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
+    matplotlib.pyplot.xlim(0.0, 1.0)
+    matplotlib.pyplot.ylabel('sensitivity', fontsize=28)
+    matplotlib.pyplot.yticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
+    matplotlib.pyplot.ylim(ylim)
+
     #add shaded sensitivity zones if required
     if (shaded_sensitivity_zones):
-    	plt.axhspan(0.7, 0.8, edgecolor='none', facecolor='lightyellow', alpha=1.0, zorder=1)
-    	plt.axhspan(0.8, 0.9, edgecolor='none', facecolor='orange', alpha=0.3, zorder=1)
+    	matplotlib.pyplot.axhspan(0.7, 0.8, edgecolor='none', facecolor='lightyellow', alpha=1.0, zorder=1)
+    	matplotlib.pyplot.axhspan(0.8, 0.9, edgecolor='none', facecolor='orange', alpha=0.3, zorder=1)
 
-    #plot data 
+    #plot data
     for (classifier_info, sensitivity_specificity_dataframe) in bunch_of_classifier_data:
         print 'Plot for classifier info: ', classifier_info
-    
+
     	#if we're being asked to plot the optimal point only (as opposed to an ROC curve)
     	if ('type' in classifier_info and classifier_info['type'] == 'optimal_point'):
-        
-        	label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier' 
+
+        	label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier'
         	if sensitivity_specificity_dataframe['coverage']<1.0:
         		label = label + ' @ '+"{0:.0f}%".format(100*sensitivity_specificity_dataframe['coverage'])+' coverage'
         	size = classifier_info['size'] if 'size' in classifier_info else 400
@@ -175,64 +179,64 @@ def plot_classifier_profiles(bunch_of_classifier_data, plot_title, default_cover
         		facecolors = classifier_info['color'] if 'color' in classifier_info else None
         	else:
         		facecolors = 'none'
-	
-        	
-        	
-         	
+
+
+
+
         	label = label + " [ {0:.0f}%".format(100*sensitivity_specificity_dataframe['sensitivity'])+' sens, '
         	label = label + "{0:.0f}%".format(100*sensitivity_specificity_dataframe['specificity'])+' spec]'
-       
 
-        	plt.scatter([sensitivity_specificity_dataframe['specificity']],[sensitivity_specificity_dataframe['sensitivity']], s=size, alpha=alpha, facecolors=facecolors, edgecolors=edgecolors, label=label, zorder=10)
-    	
+
+        	matplotlib.pyplot.scatter([sensitivity_specificity_dataframe['specificity']],[sensitivity_specificity_dataframe['sensitivity']], s=size, alpha=alpha, facecolors=facecolors, edgecolors=edgecolors, label=label, zorder=10)
+
     	#we default to plotting curves
     	else:
-    	
+
             min_acceptable_coverage = classifier_info['coverage'] if 'coverage' in classifier_info else default_coverage_to_plot
             specificity_sensitivity_values = [(spec, sen) for spec, sen in zip(sensitivity_specificity_dataframe['specificity'].values, sensitivity_specificity_dataframe['sensitivity'].values)]
             plot_color = classifier_info['color'] if 'color' in classifier_info else None
-            label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier' 
+            label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier'
             linewidth = classifier_info['linewidth'] if 'linewidth' in classifier_info else 3
             linestyle = classifier_info['linestyle'] if 'linestyle' in classifier_info else '-'
-	
-	
+
+
             if 'coverage' not in sensitivity_specificity_dataframe:
-                plt.plot(sensitivity_specificity_dataframe['specificity'], sensitivity_specificity_dataframe['sensitivity'], marker=None, linewidth=linewidth, label=label, color = plot_color, linestyle=linestyle)
-	 
+                matplotlib.pyplot.plot(sensitivity_specificity_dataframe['specificity'], sensitivity_specificity_dataframe['sensitivity'], marker=None, linewidth=linewidth, label=label, color = plot_color, linestyle=linestyle)
+
             else:
-	                                   
+
                 sensitivity_specificity_dataframe['rounded_specificity'] = sensitivity_specificity_dataframe['specificity'].apply(lambda x: 0 if np.isnan(x) else specificity_bin_width*(int(x/specificity_bin_width)) )
-				
+
                 acceptable_coverage_sensitivity_specificity_dataframe = sensitivity_specificity_dataframe[sensitivity_specificity_dataframe.coverage>=min_acceptable_coverage]
                 min_sensitivity = acceptable_coverage_sensitivity_specificity_dataframe.groupby('rounded_specificity')['sensitivity'].min()
                 max_sensitivity = acceptable_coverage_sensitivity_specificity_dataframe.groupby('rounded_specificity')['sensitivity'].max()
 
                 specificity = acceptable_coverage_sensitivity_specificity_dataframe.groupby('rounded_specificity')['rounded_specificity'].max()
-	
-                plt.plot(specificity, max_sensitivity, linewidth=linewidth, label=label, color = plot_color, linestyle=linestyle)
-	            
+
+                matplotlib.pyplot.plot(specificity, max_sensitivity, linewidth=linewidth, label=label, color = plot_color, linestyle=linestyle)
+
 
     #add legend
-    plt.legend(loc="lower left", prop={'size':legend_font_size})
-    
+    matplotlib.pyplot.legend(loc="lower left", prop={'size':legend_font_size})
+
     #add title
-    plt.title(plot_title, fontsize=20, fontweight='bold')
-    
+    matplotlib.pyplot.title(plot_title, fontsize=20, fontweight='bold')
+
     #let's do it!
-    plt.show()
-    return plt,fig
+    matplotlib.pyplot.show()
+    return matplotlib.pyplot,fig
 
 #same as above but plots a simple bar chart instead of complicated ROC curves
 def barplot_classifier_profiles(bunch_of_classifier_data, plot_title, sensitivity_low=0.75, sensitivity_high=0.85, min_coverage=0.7):
 
     barplot_data = []
-    
+
     for (classifier_info, sensitivity_specificity_dataframe) in bunch_of_classifier_data:
-        label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier' 
-    
+        label = classifier_info['label'] if 'label' in classifier_info else 'unnamed classifier'
+
         if 'coverage' in sensitivity_specificity_dataframe.columns:
             sensitivity_specificity_dataframe = sensitivity_specificity_dataframe[(sensitivity_specificity_dataframe['coverage']>=min_coverage) ]
-        
+
             sensitivity = sensitivity_specificity_dataframe.groupby('rounded_specificity')['sensitivity'].max()
             specificity = sensitivity_specificity_dataframe.groupby('rounded_specificity')['rounded_specificity'].max()
         else:
@@ -245,39 +249,37 @@ def barplot_classifier_profiles(bunch_of_classifier_data, plot_title, sensitivit
 
         barplot_data += [ (classifier_info['label'],bar_height) ]
 
-    fig = plt.figure(figsize=(20, 10))
+    fig = matplotlib.pyplot.figure(figsize=(20, 10))
 
-    barlist = plt.barh( range(len(barplot_data)), [x[1] for x in barplot_data] , align='center', edgecolor = "black", alpha=0.8 )
-    plt.yticks(range(len(barplot_data)), [x[0] for x in barplot_data])
+    barlist = matplotlib.pyplot.barh( range(len(barplot_data)), [x[1] for x in barplot_data] , align='center', edgecolor = "black", alpha=0.8 )
+    matplotlib.pyplot.yticks(range(len(barplot_data)), [x[0] for x in barplot_data])
 
     #setup value labels
     for i, v in enumerate( [x[1] for x in barplot_data] ):
-        plt.text(v - 0.05,  i-0.1, "{0:.0f}%".format(100*v), color='black', fontsize=24)
-    
+        matplotlib.pyplot.text(v - 0.05,  i-0.1, "{0:.0f}%".format(100*v), color='black', fontsize=24)
+
     #setup name labels
     for i,v in enumerate ( [x[0]['label'] for x in bunch_of_classifier_data] ):
-        plt.text(0.02,  i-0.1, v, color='black', fontsize=18)
-   
+        matplotlib.pyplot.text(0.02,  i-0.1, v, color='black', fontsize=18)
+
     #setup colors
     for i in range(0, len(barlist)):
         classifier_info = bunch_of_classifier_data[i][0]
         color = classifier_info['color'] if 'color' in classifier_info else None
         barlist[i].set(facecolor=color)
 
-    #setup axes        
-    plt.ylabel('algorithm', fontsize=28)
-    plt.yticks([])
- 
-    plt.xlabel('specificity', fontsize=28)
-    plt.xticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
-    plt.xlim(0.0, 1.0)
+    #setup axes
+    matplotlib.pyplot.ylabel('algorithm', fontsize=28)
+    matplotlib.pyplot.yticks([])
+
+    matplotlib.pyplot.xlabel('specificity', fontsize=28)
+    matplotlib.pyplot.xticks(np.arange(0.0, 1.1, 0.05), fontsize=16)
+    matplotlib.pyplot.xlim(0.0, 1.0)
 
     #add title
-    plt.title(plot_title, fontsize=20, fontweight='bold')
+    matplotlib.pyplot.title(plot_title, fontsize=20, fontweight='bold')
 
-    #let's do it!    
+    #let's do it!
     print 'show figure with title ', plot_title
-    plt.show()
-    return plt,fig
-
-
+    matplotlib.pyplot.show()
+    return matplotlib.pyplot,fig

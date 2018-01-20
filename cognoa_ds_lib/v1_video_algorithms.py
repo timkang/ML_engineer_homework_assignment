@@ -1,12 +1,19 @@
+# all the imports should be at the top
+import numpy as np
+
 ### Algorithms taken from https://github.com/cognoa/cognoa/tree/develop/app/calculators,
 ### Converted from ruby
 
+"""there should be docstrings throughout this code"""
+
+# add in a short description docstring on what this function is used for
 def branch(score, fulcrum, low, high):
 	if score < fulcrum:
 		return low
 	else:
 		return high
 
+# add in a short description docstring on what this class and its functions are used for
 class Cog1Calculator(object):
 	def __init__(self):
 		pass
@@ -59,7 +66,8 @@ class Cog1Calculator(object):
 		calc_so_far = self.C1(vC1, calc_so_far)
 		return calc_so_far
 
-
+	# these next few functions should have more descriptive names.
+	# B10, B2, C2, etc. give absolutely no indicatiion what they are used for
 	def B10(self, vB10, vB2, vC2, init):
 		if vB10<1.5:
 			init+=0.254
@@ -83,7 +91,7 @@ class Cog1Calculator(object):
 	def C2(self, vC2, init):
 		init += branch(vC2, 1.5, 0.404, -0.108)
 		return init
-	
+
 	def B1(self, vB1, vA2, init):
 		if vB1<1:
 			init+=0.99
@@ -91,7 +99,7 @@ class Cog1Calculator(object):
 			init+=-0.532
 			init = self.A2(vA2, init)
 		return init
-	
+
 	def B5(self, vB5, init):
 		init += branch(vB5, 0.5, -0.245, -1.144)
 		return init
@@ -108,7 +116,7 @@ class Cog1Calculator(object):
 	def C1(self, vC1, init):
 		init += branch(vC1, 0.5, 0.365, +0.974)
 		return init
-			
+
 	def compute_raw_scores_on_df(self, input_df):
 		''' Assumes that all rows in input_df are cog1 based '''
 		input_df['cog1_response'] = input_df.apply(self.compute_raw_score_on_row, axis=1)
@@ -116,9 +124,7 @@ class Cog1Calculator(object):
 		input_df['is_high_risk'] = input_df['risk_level'].apply(self.is_high_risk)
 		return input_df
 
-
-import numpy as np
-
+# add in a short description docstring on what this class and its functions are used for
 class Cog2Calculator(object):
 	def __init__(self):
 		pass
@@ -140,7 +146,7 @@ class Cog2Calculator(object):
 		elif value in [0,1,2,3,4]:
 			return value
 		raise ValueError('unexpected score '+str(value))
-	
+
 	def compute_raw_scores_on_df(self, input_df):
 		questions = ['ados2_a5', 'ados2_a8', 'ados2_b1', 'ados2_b3', 'ados2_b6', 'ados2_b8', 'ados2_b10', 'ados2_d2', 'ados2_d4']
 		df_for_calculation = input_df[questions]
@@ -156,4 +162,3 @@ class Cog2Calculator(object):
 		input_df['risk_level'] = input_df['cog2_response'].apply(self.get_risk_level)
 		input_df['is_high_risk'] = input_df['risk_level'].apply(self.is_high_risk)
 		return input_df
-
